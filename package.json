@@ -1,0 +1,14 @@
+{
+	"name": "random-ideas",
+	"version": "1.0.0",
+	"description": "Random App ideas",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js"
+	},
+	"author": "Emmanuel Awefada",
+	"license": "MIT",
+	"dependencies": {
+		"express": "^4.18.2"
+	}
+}
