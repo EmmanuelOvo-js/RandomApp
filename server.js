@@ -1,52 +1,41 @@
+const path = require("path"); // nodejs module
 const express = require("express");
-const port = 5000;
+const cors = require("cors");
+require("dotenv").config();
+const port = process.env.PORT || 5000; //test the port i added in dotenv file
+const connectDB = require("./config/db"); //call in datababse function from config file
+
+connectDB(); //invoke the function from config file
 
 const app = express();
 
-const ideas = [
-	{
-		id: 1,
-		text: "Positive NewsLetter, a newsletter that only shares positive, uplifting news",
-		tag: "Technology",
-		username: "TonyStark",
-		date: "2022-01-02",
-	},
-	{
-		id: 2,
-		text: "Milk cartons that turn a different color the older that your milk is getting",
-		tag: "Inventions",
-		username: "SteveRogers",
-		date: "2022-01-02",
-	},
-	{
-		id: 3,
-		text: "ATM location app which lets you know where the closest ATM is and if it is in service",
-		tag: "Software",
-		username: "BruceBanner",
-		date: "2022-01-02",
-	},
-];
+//make a static folder
+app.use(express.static(path.join(__dirname, "public")));
 
+//Body parser Middleware
+//use this always
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+//Cors Midleware
+app.use(cors());
+//Or you tell cors to give access to specific URL
+// app.use(
+// 	core({
+// 		origin: ["http://localhost:5000", "http://localhost:3000"],
+// 		credentials: true,
+// 	})
+// );
+
+// Welcome route
 app.get("/", (req, res) => {
 	res.json({ message: "Welcome to Emmanuel's App" });
 });
 
-//Get all ideas
-app.get("/api/ideas", (req, res) => {
-	res.json({ success: "true", data: ideas });
-});
-
-app.get("/api/ideas/:id", (req, res) => {
-	const idea = ideas.find((idea) => idea.id === +req.params.id);
-
-	if (!idea) {
-		return res
-			.status(404)
-			.json({ mssage: "false", error: "Request not Found" });
-	}
-
-	res.json({ success: "true", data: ideas });
-});
+//linking to ideas.js router
+const ideasRouter = require("./routes/ideas.js");
+//use. method for middleware
+app.use("/api/ideas", ideasRouter); //connect endpoint to ideas.js
 
 //server port
 app.listen(port, () => {
